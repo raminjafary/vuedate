@@ -1,16 +1,48 @@
 {
   "name": "vuedate",
   "version": "0.1.0",
-  "private": true,
+  "description": "A vue.js date range picker for hotel and more.",
+  "author": "raminjafary <raminjafary1993@gmail.com>",
+  "license": "MIT",
+  "main": "lib/vue-hotel-datepicker.umd.js",
+  "module": "lib/vue-hotel-datepicker.esm.js",
+  "unpkg": "lib/vue-hotel-datepicker.min.js",
+  "browser": {
+    "./sfc": "src/components/VueHotelDatepicker.vue"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "build:lib": "vue-cli-service build --target lib --dest lib  --name vue-hotel-datepicker ./src/components/VueHotelDatepicker.vue",
+    "build:wc": "vue-cli-service build --target wc --dest wc --name vue-hotel-datepicker ./src/components/VueHotelDatepicker.vue",
+    "test:unit": "vue-cli-service test:unit  --coverage --no-cache",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "prebuild": "vue-cli-service build --target lib --dest lib  --name vue-hotel-datepicker ./src/components/VueHotelDatepicker.vue",
+    "postbuild": "rm -rf ./docs && cp -rf ./dist ./docs"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raminjafary/vuedate.git"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "datepicker",
+    "date picker",
+    "date range picker",
+    "hotel datepicker",
+    "vue datepicker",
+    "vue hotel datepicker"
+  ],
+  "bugs": {
+    "url": "https://github.com/raminjafary/vuedate/issues"
+  },
+  "homepage": "https://github.com/raminjafary/vuedate#readme",
   "dependencies": {
-    "core-js": "^3.6.5",
+    "vue": "^2.6.14"
+  },
+  "peerDependencies": {
     "vue": "^2.6.11"
   },
   "devDependencies": {
@@ -30,9 +62,16 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "lint-staged": "^9.5.0",
+    "node-sass": "^7.0.0",
     "prettier": "^2.2.1",
+    "sass-loader": "^12.4.0",
     "typescript": "~4.1.5",
     "vue-template-compiler": "^2.6.11"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
