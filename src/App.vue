@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Vuedate from "@/components/Vuedate.vue";
+import Vuedate from "@/components/VueDate.vue";
 
 export default Vue.extend({
   name: "App",
