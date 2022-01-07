@@ -1,6 +1,13 @@
 <template>
   <div class="container">
-    <button @click="updateCalendar(-1)">prev</button>
+    <button @click="reset">reset</button>
+    <button
+      :disabled="disableBack(startMonthDate)"
+      :class="disableBack(startMonthDate)"
+      @click="updateCalendar(-1)"
+    >
+      prev
+    </button>
     <button @click="updateCalendar(1)">next</button>
     <div class="week-days">
       <div v-for="(w, i) in weekdays" :key="i" class="week-days-item">
@@ -11,25 +18,32 @@
       {{ months[startMonthDate.getMonth()] }} {{ startMonthDate.getFullYear() }}
     </template> -->
 
-    <template v-for="(week, i) in startMonths">
-      <div class="dw" :key="'dw' + i" :id="week[i]">
-        <div
-          class="day"
-          v-for="(startDay, idx) in week"
-          :key="idx"
-          :id="startDay && startDay"
-          :class="dayStatus(startDay)"
-          @dragstart="onDragStart"
-          @dragover="($event) => $event.preventDefault()"
-          @drop="onDrop"
-          @click="onDayClick(startDay)"
-          :draggable="true"
-          ref="day"
-        >
-          <template v-if="startDay"> {{ startDay.getDate() }} </template>
+    <div class="calendar">
+      <template v-for="(week, i) in startMonths">
+        <div class="dw" :key="'dw' + i" :id="week[i]">
+          <div
+            class="day"
+            ref="day"
+            :key="idx"
+            :id="startDay && startDay"
+            :class="dayStatus(startDay)"
+            :draggable="true"
+            v-for="(startDay, idx) in week"
+            @dragstart="onDragStart"
+            @dragend="onDragEnd"
+            @dragover="onDragOver"
+            @dragleave="onDragLeave"
+            @drop="onDrop"
+            @mouseover="onMouseOver"
+            @mousedown="onMouseDown"
+            @mousemove="onMouseMove"
+            @click="onDayClick(startDay)"
+          >
+            <template v-if="startDay"> {{ startDay.getDate() }} </template>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -81,18 +95,6 @@ export default Vue.extend({
       type: Array,
       default: () => [],
     },
-    resetText: {
-      type: String,
-      default: "Reset",
-    },
-    confirmText: {
-      type: String,
-      default: "Confirm",
-    },
-    mobile: {
-      type: String,
-      default: "",
-    },
     weekdays: {
       type: Array,
       default: () => ["Sun.", "Mon.", "Tue.", "Wen.", "Thu.", "Fri.", "Sat."],
@@ -117,7 +119,11 @@ export default Vue.extend({
   },
   data() {
     return {
-      selectStartDate: "" as unknown as Date,
+      selectStartDate: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        20
+      ) as unknown as Date,
       selectEndDate: "" as unknown as Date,
       startMonthDate: "" as unknown as Date,
       endMonthDate: "" as unknown as Date,
@@ -130,6 +136,9 @@ export default Vue.extend({
       dragStartDate: false,
       dragEndDate: false,
       rows: 1,
+      startCellIndex: 0,
+      startRowIndex: 0,
+      moving: null as unknown as HTMLElement,
     };
   },
   created() {
@@ -182,9 +191,6 @@ export default Vue.extend({
     }
     this.updateCalendar();
   },
-  // mounted() {
-
-  // },
   computed: {},
   methods: {
     createCalendar(
@@ -200,8 +206,8 @@ export default Vue.extend({
       let base = new Date(year, fromMonth, 1, 0, 0, 0);
       let time = new Date(year, fromMonth, 1, 0, 0, 0);
 
-      const months: Date[][] = [];
-      let weeks: Date[] = [];
+      const months: (Date | any)[][] = [];
+      let weeks: (Date | boolean)[] = [];
 
       let nextMonth = false;
       let completed = false;
@@ -250,21 +256,130 @@ export default Vue.extend({
       }
       return months;
     },
+    onMouseUp(e: Event & { target: HTMLDivElement }) {
+      console.log("up");
+    },
+    onMouseMove(e: Event & { target: HTMLDivElement }) {
+      console.log("move");
+    },
+    onMouseDown(e: Event & { target: HTMLDivElement }) {
+      this.moving = e.target;
+
+      const cells =
+        (e.target.parentNode?.children as unknown as HTMLDivElement[]) || [];
+
+      const rows =
+        (e.target.parentNode?.parentNode
+          ?.children as unknown as HTMLDivElement[]) || [];
+
+      this.startRowIndex = [...rows].findIndex(
+        (el) => el.id === e.target.parentElement?.id
+      );
+
+      this.startCellIndex = [...cells].findIndex((el) => el.id === e.target.id);
+    },
+    onMouseOver(e: Event & { target: HTMLDivElement }) {
+      if (
+        !this.selectStartDate ||
+        (this.selectStartDate && this.selectEndDate)
+      ) {
+        return;
+      }
+
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".in-date-range"),
+        (el: HTMLElement) => {
+          el.classList.remove("in-date-range");
+        }
+      );
+
+      this.selectTo(e.target);
+    },
+    selectTo(cell: HTMLElement) {
+      const parent = cell.parentNode?.parentNode;
+      const rows = cell.parentNode?.parentNode?.children?.length || 0;
+
+      for (let i = this.startRowIndex; i <= rows; i++) {
+        let rowCell = parent?.children[i]?.children || [];
+        for (let j = 0; j <= rowCell.length; j++) {
+          if (
+            this.selectStartDate.getTime() <
+              new Date(rowCell?.[j]?.id).getTime() &&
+            new Date(rowCell?.[j]?.id).getTime() <= new Date(cell.id).getTime()
+          ) {
+            rowCell?.[j]?.classList.add("in-date-range");
+          }
+        }
+      }
+    },
+    disableBack(datetime: string | Date) {
+      const now = new Date();
+      const today = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,
+        0,
+        0
+      );
+      datetime = typeof datetime === "string" ? new Date(datetime) : datetime;
+      if (datetime && this.selectForward) {
+        if (this.selectMinDate) {
+          if (datetime.getFullYear() < this.selectMinDate.getFullYear()) {
+            return "disabled";
+          }
+          if (
+            datetime.getFullYear() === this.selectMinDate.getFullYear() &&
+            datetime.getMonth() <= this.selectMinDate.getMonth()
+          ) {
+            return "disabled";
+          }
+        }
+      } else {
+        if (
+          datetime.getFullYear() === today.getFullYear() &&
+          datetime.getMonth() <= today.getMonth()
+        ) {
+          return "disabled";
+        }
+      }
+    },
     reset() {
       this.selectStartDate = "" as unknown as Date;
       this.selectEndDate = "" as unknown as Date;
       this.$emit("reset");
+    },
+    onDragOver(e: DragEvent & { target: HTMLDivElement }) {
+      e.preventDefault();
+      e.target.style.border = "1px dotted black";
+    },
+    onDragLeave(e: DragEvent & { target: HTMLDivElement }) {
+      e.target.style.border = "none";
+    },
+    onDragEnd(e: DragEvent & { target: HTMLDivElement }) {
+      e.target.style.opacity = "1";
+
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".day"),
+        (el: HTMLElement) => {
+          el.style.border = "1px dotted transparent";
+        }
+      );
     },
     onDragStart(e: DragEvent & { target: HTMLDivElement }) {
       if (
         e.target.classList.contains("start-date") ||
         e.target.classList.contains("end-date")
       ) {
+        e.target.style.opacity = "0.4";
         e.dataTransfer?.setData("text", e.target?.id);
         this.dragStartDate = !!e.target.classList.contains("start-date");
         this.dragEndDate = !!e.target.classList.contains("end-date");
       } else {
         e.preventDefault();
+        e.stopImmediatePropagation()
+        e.stopPropagation()
+        return
       }
     },
     formatDate(datetime: string | Date) {
@@ -289,6 +404,7 @@ export default Vue.extend({
     },
     onDrop(e: Event & { target: HTMLDivElement }) {
       e.preventDefault();
+      e.stopPropagation();
 
       const rows =
         (e.target as HTMLDivElement).parentNode?.parentNode?.children || [];
@@ -296,6 +412,12 @@ export default Vue.extend({
 
       for (const row of rows) {
         for (const item of row.children) {
+          if (
+            item.classList.contains("disabled") ||
+            item.classList.contains("forbidden")
+          ) {
+            break;
+          }
           if (this.dragStartDate) {
             if (e.target?.id === item.id) {
               item.classList.add("start-date");
@@ -489,6 +611,9 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
+* {
+  box-sizing: border-box;
+}
 .container {
   display: inline-block;
   vertical-align: top;
@@ -521,6 +646,7 @@ export default Vue.extend({
   float: left;
   position: relative;
   width: 40px;
+  border: 1px dotted transparent;
   height: 40px;
   font-size: 16px;
   font-weight: 500;
@@ -590,4 +716,12 @@ export default Vue.extend({
   color: #fed9d8;
   cursor: not-allowed;
 }
+
+@media(hover: hover) and (pointer: fine) {
+    .day:hover {
+        background: yellow;
+        color: red;
+    }
+}
+
 </style>
