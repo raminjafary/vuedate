@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@types/jest': ^27.4.0
+  '@types/jest': 27.4.0
   '@typescript-eslint/eslint-plugin': ^5.8.1
   '@typescript-eslint/parser': ^5.8.1
   '@vue/cli-plugin-babel': ~4.5.15
@@ -4936,6 +4936,7 @@ packages:
 
   /encoding/0.1.13:
     resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+    requiresBuild: true
     dependencies:
       iconv-lite: 0.6.3
     dev: true
@@ -5827,6 +5828,7 @@ packages:
   /fork-ts-checker-webpack-plugin/5.2.1:
     resolution: {integrity: sha512-SVi+ZAQOGbtAsUWrZvGzz38ga2YqjWvca1pXQFUArIVXqli0lLoDQ8uS0wg0kSpcwpZmaW5jVCZXQebkyUQSsw==}
     engines: {node: '>=10', yarn: '>=1.0.0'}
+    requiresBuild: true
     dependencies:
       '@babel/code-frame': 7.16.7
       '@types/json-schema': 7.0.9
@@ -5944,6 +5946,7 @@ packages:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -12094,6 +12097,7 @@ packages:
 
   /vue-loader/16.8.3_webpack@4.46.0:
     resolution: {integrity: sha512-7vKN45IxsKxe5GcVCbc2qFU5aWzyiLrYJyUuMz4BQLKctCj/fmCa0w6fGiiQ2cLFetNcek1ppGJQDCup0c1hpA==}
+    requiresBuild: true
     peerDependencies:
       webpack: ^4.1.0 || ^5.0.0-0
     dependencies:
@@ -12148,6 +12152,7 @@ packages:
 
   /watchpack-chokidar2/2.0.1:
     resolution: {integrity: sha512-nCFfBIPKr5Sh61s4LPpy1Wtfi0HE8isJ3d2Yb5/Ppw2P2B/3eVSEBjKfN0fmHJSK14+31KwMKmcrzs2GM4P0Ww==}
+    requiresBuild: true
     dependencies:
       chokidar: 2.1.8
     dev: true
