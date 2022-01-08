@@ -33,13 +33,15 @@
             @dragend="onDragEnd"
             @dragover="onDragOver"
             @dragleave="onDragLeave"
+            @dragenter="onDragEnter"
             @drop="onDrop"
             @mouseover="onMouseOver"
             @mousedown="onMouseDown"
-            @mousemove="onMouseMove"
             @click="onDayClick(startDay)"
           >
-            <template v-if="startDay"> {{ startDay.getDate() }} </template>
+            <template v-if="startDay">
+              {{ startDay.getDate() }}
+            </template>
           </div>
         </div>
       </template>
@@ -256,12 +258,6 @@ export default Vue.extend({
       }
       return months;
     },
-    onMouseUp(e: Event & { target: HTMLDivElement }) {
-      console.log("up");
-    },
-    onMouseMove(e: Event & { target: HTMLDivElement }) {
-      console.log("move");
-    },
     onMouseDown(e: Event & { target: HTMLDivElement }) {
       this.moving = e.target;
 
@@ -353,7 +349,27 @@ export default Vue.extend({
       e.preventDefault();
       e.target.style.border = "1px dotted black";
     },
+    onDragEnter (e: DragEvent & { target: HTMLDivElement }) {
+    e.preventDefault();
+
+      if (
+        !this.selectStartDate ||
+        (this.selectStartDate && this.selectEndDate)
+      ) {
+        return;
+      }
+
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".in-date-range"),
+        (el: HTMLElement) => {
+          el.classList.remove("in-date-range");
+        }
+      );
+
+      this.selectTo(e.target);
+    },
     onDragLeave(e: DragEvent & { target: HTMLDivElement }) {
+      e.preventDefault();
       e.target.style.border = "none";
     },
     onDragEnd(e: DragEvent & { target: HTMLDivElement }) {
@@ -377,9 +393,9 @@ export default Vue.extend({
         this.dragEndDate = !!e.target.classList.contains("end-date");
       } else {
         e.preventDefault();
-        e.stopImmediatePropagation()
-        e.stopPropagation()
-        return
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        return;
       }
     },
     formatDate(datetime: string | Date) {
@@ -657,7 +673,7 @@ export default Vue.extend({
   cursor: pointer;
   transition: background-color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-.day::before,
+/* .day::before,
 .day::after {
   content: "";
   position: absolute;
@@ -673,42 +689,36 @@ export default Vue.extend({
 .day::after {
   left: auto;
   right: 0;
-}
+} */
 .day.disabled {
   color: #ececec;
   pointer-events: none;
 }
 .day.in-date-range {
-  background-color: #deeefa;
+  background: linear-gradient(
+    90deg,
+    rgba(60, 150, 226, 0.1) 0%,
+    rgba(96, 96, 96, 0.1) 20%,
+    rgba(60, 150, 226, 0.1) 60%,
+    rgba(96, 96, 96, 0.1) 100%
+  );
 }
 .day.start-date {
   position: relative;
-  background-color: #061222;
+  background-color: #3c96e2;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   color: white !important;
 }
-.day.start-date::before {
-  width: 4px;
-  background-color: #0088ff;
-  opacity: 1;
-}
+
 .day.end-date {
   position: relative;
-  background-color: #3c96e2;
+  background-color: #606060;
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
   color: white;
 }
 
-.day.end-date:after {
-  width: 4px;
-  background-color: #0088ff;
-  opacity: 1;
-  transition: opacity 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
-    background-color 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
-    width 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
 .day.today {
   color: red;
 }
@@ -717,11 +727,60 @@ export default Vue.extend({
   cursor: not-allowed;
 }
 
-@media(hover: hover) and (pointer: fine) {
-    .day:hover {
-        background: yellow;
-        color: red;
-    }
+.day.end-date:after {
+  content: url("../assets/black-handle.svg");
+  position: absolute;
+  background-size: 50px;
+  opacity: 0;
+  top: 50%;
+  right: -5px;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, -14px, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  opacity: 1;
 }
 
+.day.start-date:after {
+  content: url("../assets/blue-handle.svg");
+  position: absolute;
+  background-size: 50px;
+  opacity: 0;
+  top: 50%;
+  left: -5px;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, -14px, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  opacity: 1;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, -14px, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, -14px, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, -14px, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, -14px, 0);
+  }
+}
+
+/* @media(hover: hover) and (pointer: fine) {
+    .day:hover {
+        color: red;
+    }
+} */
 </style>
