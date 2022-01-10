@@ -22,11 +22,14 @@
       <template v-for="(week, i) in startMonths">
         <div class="dw" :key="'dw' + i" :id="week[i]">
           <div
-            class="day"
             ref="day"
             :key="idx"
             :id="startDay && startDay"
-            :class="dayStatus(startDay)"
+            :class="[
+              'day',
+              !startDay ? 'not-in-month' : '',
+              dayStatus(startDay),
+            ]"
             :draggable="true"
             v-for="(startDay, idx) in week"
             @dragstart="onDragStart"
@@ -347,10 +350,17 @@ export default Vue.extend({
     },
     onDragOver(e: DragEvent & { target: HTMLDivElement }) {
       e.preventDefault();
+      if (
+        e.target.classList.contains("disabled") ||
+        e.target.classList.contains("forbidden") ||
+        e.target.classList.contains("not-in-month")
+      ) {
+        return;
+      }
       e.target.style.border = "1px dotted black";
     },
-    onDragEnter (e: DragEvent & { target: HTMLDivElement }) {
-    e.preventDefault();
+    onDragEnter(e: DragEvent & { target: HTMLDivElement }) {
+      e.preventDefault();
 
       if (
         !this.selectStartDate ||
@@ -430,7 +440,8 @@ export default Vue.extend({
         for (const item of row.children) {
           if (
             item.classList.contains("disabled") ||
-            item.classList.contains("forbidden")
+            item.classList.contains("forbidden") ||
+            item.classList.contains("not-in-month")
           ) {
             break;
           }
