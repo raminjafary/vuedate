@@ -40,10 +40,10 @@
   },
   "homepage": "https://github.com/raminjafary/vuedate#readme",
   "dependencies": {
-    "vue": "2.6.14"
+    "vue": "3.2.36"
   },
   "peerDependencies": {
-    "vue": "2.6.14"
+    "vue": "3.2.36"
   },
   "devDependencies": {
     "@types/jest": "27.5.1",
@@ -52,7 +52,7 @@
     "@vue/cli-plugin-babel": "~5.0.4",
     "@vue/cli-plugin-e2e-cypress": "~5.0.4",
     "@vue/cli-plugin-eslint": "~5.0.4",
-    "@vue/cli-plugin-typescript": "~4.5.15",
+    "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-plugin-unit-jest": "~5.0.4",
     "@vue/cli-service": "~5.0.4",
     "@vue/eslint-config-prettier": "^7.0.0",
