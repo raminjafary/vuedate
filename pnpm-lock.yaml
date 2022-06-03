@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@types/jest': 27.5.1
+  '@types/jest': 27.5.2
   '@typescript-eslint/eslint-plugin': ^5.8.1
   '@typescript-eslint/parser': ^5.8.1
   '@vue/cli-plugin-babel': ~5.0.4
@@ -26,7 +26,7 @@ dependencies:
   vue: 3.2.36
 
 devDependencies:
-  '@types/jest': 27.5.1
+  '@types/jest': 27.5.2
   '@typescript-eslint/eslint-plugin': 5.8.1_2372febd942ace04b758ccfcceb82b47
   '@typescript-eslint/parser': 5.8.1_eslint@8.16.0+typescript@4.7.3
   '@vue/cli-plugin-babel': 5.0.4_397320c858d25ac03e18aa6d1b80b1a3
@@ -1793,8 +1793,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
-  /@types/jest/27.5.1:
-    resolution: {integrity: sha512-fUy7YRpT+rHXto1YlL+J9rs0uLGyiqVt3ZOTQR+4ROc47yNl8WLdVLgUloBRhOxP1PZvguHl44T3H0wAWxahYQ==}
+  /@types/jest/27.5.2:
+    resolution: {integrity: sha512-mpT8LJJ4CMeeahobofYWIjFo0xonRS/HfxnVEPMPFSQdGUt1uHCnoPT7Zhb+sjDU2wz0oKV0OLUR0WzrHNgfeA==}
     dependencies:
       jest-matcher-utils: 27.5.1
       pretty-format: 27.5.1
@@ -2269,7 +2269,7 @@ packages:
     dependencies:
       '@babel/core': 7.16.7
       '@babel/plugin-transform-modules-commonjs': 7.16.7_@babel+core@7.16.7
-      '@types/jest': 27.5.1
+      '@types/jest': 27.5.2
       '@vue/cli-service': 5.0.4_vue-template-compiler@2.6.14
       '@vue/cli-shared-utils': 5.0.4
       babel-jest: 27.5.1_@babel+core@7.16.7
