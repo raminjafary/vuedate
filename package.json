@@ -40,10 +40,10 @@
   },
   "homepage": "https://github.com/raminjafary/vuedate#readme",
   "dependencies": {
-    "vue": "3.2.36"
+    "vue": "3.2.40"
   },
   "peerDependencies": {
-    "vue": "3.2.36"
+    "vue": "3.2.40"
   },
   "devDependencies": {
     "@types/jest": "27.5.1",
